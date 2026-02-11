@@ -9,17 +9,35 @@ import {
   ShieldCheck, 
   Zap, 
   Award,
-  ChevronDown
+  ChevronDown,
+  Lock,
+  Star,
+  Monitor,
+  Layout,
+  MousePointer2,
+  BarChart3,
+  MessagesSquare,
+  Repeat,
+  Image as ImageIcon
 } from 'lucide-react';
+import { Analytics } from '../analytics';
 
 const SalesPage: React.FC = () => {
-  const [timeLeft, setTimeLeft] = useState(15 * 60 + 43); // 15:43
+  const [timeLeft, setTimeLeft] = useState(15 * 60 + 43);
+  const [showCTA, setShowCTA] = useState(false);
+  const [videoStarted, setVideoStarted] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
     }, 1000);
-    return () => clearInterval(timer);
+    
+    const ctaTimer = setTimeout(() => setShowCTA(true), 8000);
+
+    return () => {
+      clearInterval(timer);
+      clearTimeout(ctaTimer);
+    };
   }, []);
 
   const formatTime = (seconds: number) => {
@@ -28,112 +46,115 @@ const SalesPage: React.FC = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const handleEnroll = () => {
+    Analytics.trackInitiateCheckout(297.00);
+    window.location.href = "https://pay.exemplo.com/click-earn-oferta";
+  };
+
+  const proofScreenshots = [
+    { label: "Venda de R$ 4.290,00", user: "André M.", img: "https://picsum.photos/400/600?random=101" },
+    { label: "Primeiros R$ 1.000,00", user: "Bianca S.", img: "https://picsum.photos/400/600?random=102" },
+    { label: "Escala para R$ 10k", user: "Ricardo F.", img: "https://picsum.photos/400/600?random=103" },
+    { label: "Notificações diárias", user: "Carla T.", img: "https://picsum.photos/400/600?random=104" }
+  ];
+
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
-      {/* Top Banner Scarcity */}
-      <div className="bg-red-600 text-white text-center py-3 text-sm font-bold flex items-center justify-center gap-4 sticky top-0 z-50">
+      <div className="bg-red-600 text-white text-center py-3 text-sm font-bold flex items-center justify-center gap-4 sticky top-0 z-50 shadow-lg">
         <Timer className="h-4 w-4 animate-pulse" />
-        <span>OFERTA LIMITADA: Os bônus expiram em {formatTime(timeLeft)}</span>
+        <span className="uppercase tracking-wider">Atenção: Vagas limitadas. Promoção expira em {formatTime(timeLeft)}</span>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-16">
-        {/* Headline */}
         <div className="text-center mb-16">
-          <p className="text-orange-500 font-black text-sm uppercase tracking-widest mb-4">Atenção Afiliados e Empreendedores Digitais</p>
+          <div className="inline-block bg-orange-100 text-orange-600 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-6">
+            Acesso Exclusivo à Nova Estratégia 2024
+          </div>
           <h1 className="text-4xl md:text-6xl font-black heading-font text-gray-900 leading-tight mb-8">
-            Domine as Estratégias de <span className="text-orange-500">Escala de 6 Dígitos</span> e Viva de Internet em 2024
+            O Sistema de <span className="text-orange-500 underline decoration-orange-200">6 Dígitos</span> para Afiliados que Desejam Liberdade
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
-            Esqueça o que te disseram sobre sorte. Marketing de Afiliados é técnica, processo e consistência. Aprenda o método Click & Earn.
-          </p>
-
-          {/* Video Placeholder */}
-          <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl bg-black group cursor-pointer border-4 border-white">
-            <img 
-              src="https://picsum.photos/1200/675?grayscale" 
-              alt="Video Preview" 
-              className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-orange-500 text-white p-6 rounded-full shadow-2xl group-hover:scale-110 transition-transform">
-                <Play className="h-12 w-12 fill-current" />
+          
+          <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl bg-black border-[6px] border-white group mb-12">
+            {!videoStarted ? (
+              <div 
+                className="absolute inset-0 z-10 flex flex-col items-center justify-center cursor-pointer bg-cover bg-center"
+                style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://picsum.photos/1200/675?random=50')` }}
+                onClick={() => setVideoStarted(true)}
+              >
+                <div className="bg-orange-500 text-white p-8 rounded-full shadow-2xl transform group-hover:scale-110 transition-all duration-500">
+                  <Play className="h-16 w-16 fill-current" />
+                </div>
+                <p className="mt-6 text-white font-black text-xl animate-pulse">CLIQUE PARA ASSISTIR AGORA</p>
               </div>
-            </div>
-            <div className="absolute bottom-6 left-6 right-6 text-white text-left opacity-0 group-hover:opacity-100 transition-opacity">
-              <p className="font-bold text-lg">Assista ao Vídeo Completo (12:45)</p>
-            </div>
+            ) : (
+              <iframe 
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&controls=1" 
+                title="VSL"
+                allowFullScreen
+              ></iframe>
+            )}
           </div>
         </div>
 
-        {/* Benefits Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-            <h3 className="text-2xl font-black heading-font mb-6 flex items-center gap-3">
-              <Zap className="text-orange-500" />
-              O Que Você Vai Levar:
-            </h3>
-            <ul className="space-y-4">
-              {[
-                "Módulo 01: Mentalidade de Tubarão",
-                "Módulo 02: Escolhendo Nichos de Ouro",
-                "Módulo 03: Copywriting Hipnótico para Vendas",
-                "Módulo 04: Tráfego Pago (FB, IG & Google)",
-                "Módulo 05: A Arte da Conversão no WhatsApp",
-                "BÔNUS: Comunidade Secreta de Alunos"
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 font-medium text-gray-700">
-                  <CheckCircle className="text-green-500 h-5 w-5" />
-                  {item}
-                </li>
-              ))}
-            </ul>
+        {/* Earnings Proof Section */}
+        <div className="mb-24">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-black heading-font flex items-center justify-center gap-3">
+              <ImageIcon className="text-orange-500" />
+              Resultados Que Falam Por Si Só:
+            </h2>
+            <p className="text-gray-500 mt-2 italic">Prints reais enviados por nossos alunos via WhatsApp</p>
           </div>
-
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-center text-center">
-            <p className="text-gray-400 line-through text-lg">De R$ 997,00</p>
-            <h4 className="text-6xl font-black heading-font text-gray-900 mb-2">R$ 297,00</h4>
-            <p className="text-gray-500 mb-8 font-medium">ou 12x de R$ 29,70 no cartão</p>
-            
-            <button className="w-full bg-orange-500 text-white py-6 rounded-2xl font-black text-2xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 animate-pulse">
-              QUERO ME INSCREVER AGORA
-            </button>
-            
-            <div className="flex items-center justify-center gap-2 mt-6 text-sm text-gray-400">
-              <ShieldCheck className="h-4 w-4" />
-              Garantia de 7 dias incondicional
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {proofScreenshots.map((item, i) => (
+              <div key={i} className="group relative rounded-2xl overflow-hidden shadow-md border border-gray-100 aspect-[2/3]">
+                <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
+                  <p className="text-white text-xs font-black uppercase tracking-widest opacity-70">{item.user}</p>
+                  <p className="text-white text-sm font-bold leading-tight">{item.label}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Authority / Trust Section */}
-        <div className="text-center mb-24">
-          <h2 className="text-3xl font-black heading-font mb-8">Por que confiar em nós?</h2>
-          <div className="flex flex-wrap justify-center gap-8">
-            <div className="flex flex-col items-center">
-              <Users className="h-10 w-10 text-orange-500 mb-2" />
-              <p className="font-bold text-xl">50k+</p>
-              <p className="text-sm text-gray-500 uppercase tracking-tighter">Alunos Ativos</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <Award className="h-10 w-10 text-orange-500 mb-2" />
-              <p className="font-bold text-xl">R$ 5M+</p>
-              <p className="text-sm text-gray-500 uppercase tracking-tighter">Faturados por Alunos</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <ShieldCheck className="h-10 w-10 text-orange-500 mb-2" />
-              <p className="font-bold text-xl">100%</p>
-              <p className="text-sm text-gray-500 uppercase tracking-tighter">Seguro & Vitalício</p>
-            </div>
+        <div className={`transition-all duration-1000 transform ${showCTA ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-10 scale-95 pointer-events-none'}`}>
+          <div className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl border-4 border-orange-500 text-center mb-24 relative overflow-hidden">
+             <div className="absolute top-0 left-0 w-full h-2 bg-orange-500"></div>
+             <h2 className="text-3xl font-black heading-font mb-4 uppercase">Faça sua inscrição agora!</h2>
+             
+             <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-8 mt-8">
+                <div className="text-center">
+                  <p className="text-gray-400 line-through">De R$ 997,00</p>
+                  <p className="text-5xl font-black text-gray-900">12x R$ 29,70</p>
+                  <p className="text-orange-500 font-bold">ou R$ 297,00 à vista</p>
+                </div>
+                <div className="h-px w-20 bg-gray-100 md:h-20 md:w-px"></div>
+                <button 
+                  onClick={handleEnroll}
+                  className="bg-green-500 text-white px-12 py-6 rounded-2xl font-black text-2xl hover:bg-green-600 transition-all shadow-xl shadow-green-100 flex items-center gap-3 animate-bounce"
+                >
+                  QUERO ME INSCREVER
+                  <ArrowRight className="h-6 w-6" />
+                </button>
+             </div>
+             
+             <div className="flex flex-wrap justify-center gap-6 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-green-500" /> Garantia de 7 Dias</span>
+                <span className="flex items-center gap-2"><Lock className="h-4 w-4 text-blue-500" /> Checkout Seguro</span>
+                <span className="flex items-center gap-2"><Star className="h-4 w-4 text-orange-500 fill-current" /> Acesso Imediato</span>
+             </div>
           </div>
         </div>
 
-        {/* FAQ Preview */}
-        <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-gray-100">
-          <h2 className="text-3xl font-black heading-font mb-8 text-center">Dúvidas Frequentes</h2>
+        <div className="bg-white rounded-[3rem] p-10 md:p-16 shadow-sm border border-gray-100">
+          <h2 className="text-3xl font-black heading-font mb-12 text-center">Perguntas Frequentes</h2>
           <div className="space-y-4">
-            <FAQItem question="Preciso investir em anúncios?" answer="Não é obrigatório. Ensinamos tanto estratégias orgânicas (gratuitas) quanto tráfego pago para quem quer acelerar os resultados." />
-            <FAQItem question="Funciona para quem nunca trabalhou com isso?" answer="Sim! O curso foi desenhado do absoluto zero até o avançado." />
-            <FAQItem question="Quanto tempo tenho de acesso?" answer="O acesso é vitalício. Você pode assistir as aulas quando e onde quiser, para sempre." />
+            <FAQItem question="Preciso aparecer nos vídeos?" answer="Não! Nosso método foca 100% em estratégias onde você pode ser um 'afiliado árbitro', vendendo sem precisar expor seu rosto ou nome." />
+            <FAQItem question="Em quanto tempo terei resultados?" answer="Isso depende da sua aplicação. Temos alunos que fazem a primeira venda em 24h e outros que levam 15 dias. O importante é seguir o processo." />
+            <FAQItem question="Tenho suporte se eu travar?" answer="Com certeza! Temos um grupo VIP de alunos e suporte via email e WhatsApp para tirar qualquer dúvida técnica ou estratégica." />
+            <FAQItem question="E se eu não gostar?" answer="Você tem 7 dias de garantia incondicional. Se não gostar, basta um clique e devolvemos 100% do seu dinheiro, sem perguntas." />
           </div>
         </div>
       </div>
@@ -153,7 +174,7 @@ const FAQItem = ({ question, answer }: { question: string, answer: string }) => 
         <ChevronDown className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       {isOpen && (
-        <div className="pb-6 text-gray-600 leading-relaxed animate-in fade-in slide-in-from-top-2">
+        <div className="pb-8 text-gray-600 leading-relaxed animate-in fade-in slide-in-from-top-2">
           {answer}
         </div>
       )}

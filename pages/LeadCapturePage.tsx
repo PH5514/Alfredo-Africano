@@ -1,19 +1,28 @@
 
-import React, { useState } from 'react';
-// Added Link to imports from react-router-dom
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { CheckCircle, Lock, Mail, MessageSquare, ArrowRight } from 'lucide-react';
+import { Analytics } from '../analytics';
 
 const LeadCapturePage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(33);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (email) setProgress(66);
+    if (email && whatsapp) setProgress(95);
+  }, [email, whatsapp]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulating API call
+    
+    // Rastreia o Lead nas plataformas
+    Analytics.trackLead();
+
     setTimeout(() => {
       setLoading(false);
       navigate('/oferta');
@@ -27,21 +36,21 @@ const LeadCapturePage: React.FC = () => {
         {/* Left Side: Persuasion */}
         <div className="space-y-8">
           <div className="inline-block bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest">
-            Presente Gratuito Exclusivo
+            Passo 1 de 2: Liberação de Acesso
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black heading-font leading-tight">
             Baixe Agora o Nosso Guia: <span className="text-orange-500">"Mapa da Primeira Venda"</span>
           </h1>
           <p className="text-xl text-gray-600 leading-relaxed">
-            Descubra o passo a passo exato que nossos alunos utilizam para realizar vendas nos primeiros 7 dias como afiliados, sem precisar aparecer.
+            O atalho validado para quem quer sair do zero e começar a ouvir o barulhinho de notificação de venda todos os dias.
           </p>
           
           <ul className="space-y-4">
             {[
-              "Como escolher o produto vencedor em 5 minutos",
-              "A técnica secreta de copy que converte 4x mais",
-              "Tráfego orgânico: venda sem gastar 1 real em anúncios",
-              "Script pronto de WhatsApp para fechar vendas"
+              "Estratégia de 3 passos para a primeira venda",
+              "Lista de 10 nichos inexplorados em 2024",
+              "Templates de anúncios que não são bloqueados",
+              "Como escalar de R$ 100 para R$ 1.000 por dia"
             ].map((item, i) => (
               <li key={i} className="flex items-center gap-3 text-gray-700 font-medium">
                 <CheckCircle className="text-green-500 h-6 w-6 flex-shrink-0" />
@@ -55,7 +64,7 @@ const LeadCapturePage: React.FC = () => {
               <Lock className="h-6 w-6" />
             </div>
             <p className="text-sm text-gray-500 italic">
-              Seus dados estão 100% seguros conosco. Odiamos spam tanto quanto você.
+              Não se preocupe, também odiamos spam. Seus dados estão protegidos pela LGPD.
             </p>
           </div>
         </div>
@@ -63,10 +72,18 @@ const LeadCapturePage: React.FC = () => {
         {/* Right Side: Form */}
         <div className="relative">
           <div className="absolute -inset-4 bg-orange-500/10 rounded-[3rem] blur-2xl"></div>
-          <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl relative z-10 border border-gray-100">
+          <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl relative z-10 border border-gray-100 overflow-hidden">
+            
+            <div className="absolute top-0 left-0 w-full h-2 bg-gray-100">
+              <div 
+                className="h-full bg-orange-500 transition-all duration-500 ease-out"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-black heading-font mb-2">Acesso Imediato</h3>
-              <p className="text-gray-500">Preencha os campos abaixo para receber o guia no seu email.</p>
+              <h3 className="text-2xl font-black heading-font mb-2">Quase lá!</h3>
+              <p className="text-gray-500">Onde devemos enviar o seu guia?</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -77,16 +94,16 @@ const LeadCapturePage: React.FC = () => {
                   <input 
                     required
                     type="email" 
-                    placeholder="exemplo@email.com"
+                    placeholder="voce@exemplo.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all"
+                    className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Seu WhatsApp (Opcional)</label>
+                <label className="block text-sm font-bold text-gray-700 mb-2">WhatsApp (Receba Avisos de Aulas)</label>
                 <div className="relative">
                   <MessageSquare className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                   <input 
@@ -94,7 +111,7 @@ const LeadCapturePage: React.FC = () => {
                     placeholder="(00) 00000-0000"
                     value={whatsapp}
                     onChange={(e) => setWhatsapp(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all"
+                    className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -105,18 +122,18 @@ const LeadCapturePage: React.FC = () => {
                 className="w-full bg-orange-500 text-white py-5 rounded-2xl font-black text-xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-200 flex items-center justify-center gap-2 group"
               >
                 {loading ? (
-                  <div className="h-6 w-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="h-6 w-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <>
-                    QUERO MEU GUIA GRÁTIS
+                    RECEBER MATERIAL AGORA
                     <ArrowRight className="group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
               </button>
 
               <div className="text-center">
-                <p className="text-xs text-gray-400">
-                  Ao clicar no botão, você concorda com nossos <Link to="/privacidade" className="underline">Termos de Uso</Link>.
+                <p className="text-[10px] text-gray-400 leading-tight">
+                  Ao se cadastrar, você concorda em receber comunicações de marketing do Click & Earn. Você pode cancelar a qualquer momento.
                 </p>
               </div>
             </form>
